@@ -1,31 +1,32 @@
-# 📊 Central de Controle Full-Stack Feito Por Vicenzo!
+# 📊 Central de Controle Full-Stack (Contuflex)
 
-> Painel interativo para monitoramento de dados e gestão de alertas, desenvolvido de forma independente.
+> Solução inteligente para monitoramento de dados em tempo real, integrada ao ERP TOTVS.
 
 ## 📝 Sobre o Projeto
-Esta é uma **Central de Controle** completa que integra uma interface dinâmica com um back-end robusto. O foco principal foi criar um sistema capaz de ler dados de um banco de dados SQL, processá-los via Python e exibi-los em tempo real para o usuário, permitindo o acompanhamento de métricas e alertas automáticos.
+Este projeto foi desenvolvido de forma independente para a **Contuflex**, com o objetivo de otimizar a gestão de indicadores e alertas. A aplicação atua como uma camada de inteligência sobre o **ERP TOTVS**, extraindo dados diretamente do banco SQL para oferecer uma visão clara e imediata da operação.
+
+Com esta implementação, conseguimos um controle muito mais preciso: tudo o que é atualizado no sistema oficial reflete instantaneamente no painel, eliminando processos manuais e atrasos na informação.
+
+## ✨ Diferenciais e Impacto
+* **Integração TOTVS:** Extração automatizada de dados via SQL para monitoramento fiel ao sistema.
+* **Sincronização em Tempo Real:** Atualização dinâmica de alertas e métricas baseada na movimentação do ERP.
+* **Controle Operacional:** Painel focado em identificar pendências (count-alerta) e exibir dados filtrados para tomada de decisão rápida.
 
 ## 🛠️ Tecnologias Utilizadas
-
-* **Front-end:** HTML5, CSS3 e JavaScript (Vanilla) para manipulação do DOM e lógica de filtros.
-* **Back-end:** Python com o framework **Flask**.
-* **Banco de Dados:** SQL Server acessado via biblioteca **pyodbc**.
-* **Automação:** Scripts de inicialização em lote (`.bat`) para facilitar o deploy local.
-
-## ✨ Funcionalidades
-* **Visualização de Dados:** Exibição dinâmica de informações em tabelas e gráficos.
-* **Sistema de Alertas:** Contador automático (`count-alerta`) que identifica pendências ou notificações críticas.
-* **Filtros Inteligentes:** Lógica em JS para filtrar resultados sem a necessidade de recarregar a página.
-* **Integração de Dados:** Conexão direta com banco de dados SQL para garantir dados reais e atualizados.
+* **Back-end:** Python + Flask (API e Regras de Negócio).
+* **Banco de Dados:** SQL Server (Conexão via **pyodbc** extraindo dados do Protheus/TOTVS).
+* **Front-end:** HTML5, CSS3 e JavaScript Vanilla (Interface reativa e manipulação do DOM).
+* **Automação:** Scripts de inicialização em lote (`.bat`) para facilitar o uso no dia a dia da firma.
 
 ## 🚀 Como Executar
 1. Certifique-se de ter o **Python 3.x** e o driver do **SQL Server** instalados.
-2. Instale as dependências necessárias:
+2. Configure as credenciais de acesso ao banco do sistema no arquivo `app.py`.
+3. Instale as dependências:
    ```bash
-   pip install flask pyodb
+   pip install flask pyodbc
 
-3. Configure a sua string de conexão no arquivo app.py.
-4. Execute o sistema através do arquivo Iniciar_Sistema.bat ou via terminal:
+4. Configure a sua string de conexão no arquivo app.py.
+5. Execute o sistema através do arquivo Iniciar_Sistema.bat ou via terminal:
     ```bash
     python app.py
 
