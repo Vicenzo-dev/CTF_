@@ -1,0 +1,7 @@
+flask
+flask-cors
+pyodbc
+pandas
+qrcode
+requests
+openpyxl
