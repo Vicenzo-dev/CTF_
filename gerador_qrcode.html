@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Etiquetas - Contuflex</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            --blue-contuflex: #003d5b;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: var(--bg-gradient); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        input {
+            width: 80%;
+            padding: 12px;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .btn-gerar {
+            background: var(--blue-contuflex);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        #qrcode-container {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .link-resultado {
+            word-break: break-all;
+            font-size: 13px;
+            color: #555;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px dashed #ccc;
+        }
+
+        .btn-imprimir {
+            background: #2ed573;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #qrcode-container, #qrcode-container * { visibility: visible; }
+            #qrcode-container { position: absolute; left: 0; top: 0; width: 100%; }
+            .btn-imprimir, .link-resultado { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <img src="LOGO-CONTUFLEX-e1756214639359.png" alt="Logo" width="150">
+        <h2 style="color: var(--blue-contuflex);">Gerador de QR Code</h2>
+        <p style="font-size: 14px; color: #666;">Digite o número do pedido para gerar o link de consulta.</p>
+
+        <input type="text" id="pedidoInput" placeholder="Ex: PTBSFH" maxlength="10">
+        
+        <button class="btn-gerar" onclick="gerarLink()">🚀 Gerar QR Code</button>
+
+        <div id="qrcode-container" style="display: none;">
+            <div id="qrcode"></div>
+            <div class="link-resultado" id="linkTexto"></div>
+            <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir Etiqueta</button>
+        </div>
+    </div>
+
+    <script>
+        function gerarLink() {
+            const pedido = document.getElementById('pedidoInput').value.trim().toUpperCase();
+            if (!pedido) {
+                alert("Por favor, digite o número do pedido.");
+                return;
+            }
+
+            // Pega o IP atual do servidor automaticamente
+            const ipServidor = window.location.hostname; 
+            const porta = window.location.port || "5000";
+            
+            // Monta a URL que o QR Code vai abrir
+            const urlFinal = `http://${ipServidor}:${porta}/pedido_detalhes.html?id=${pedido}`;
+
+            // Limpa o QR Code anterior e gera o novo
+            document.getElementById('qrcode').innerHTML = "";
+            new QRCode(document.getElementById("qrcode"), {
+                text: urlFinal,
+                width: 180,
+                height: 180,
+                colorDark : "#003d5b",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            document.getElementById('linkTexto').innerText = urlFinal;
+            document.getElementById('qrcode-container').style.display = "flex";
+        }
+    </script>
+</body>
+</html>

@@ -25,7 +25,6 @@
         td { padding: 10px 12px; border-bottom: 1px solid #f1f1f1; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .row-item:hover { background-color: #f9f9f9; }
         .status-alerta { color: #ff4757; font-weight: bold; }
-        /* Estilo da nova coluna LOC */
         .td-loc { font-weight: bold; color: #003d5b; background: #eef2f7; text-align: center; border-radius: 4px; }
     </style>
 </head>
@@ -38,7 +37,8 @@
         <h1>Painel de Gestão de Expedição</h1>
         <h4>Feito Por Vicenzo!</h4>
     </header>
- <div class="nav-container">
+
+    <div class="nav-container">
         <a href="inicio.html" style="color: white; font-weight: bold; text-decoration: none; background: rgba(0,0,0,0.2); padding: 8px 15px; border-radius: 6px;">🏠 Início</a>
     </div>
   
@@ -59,27 +59,31 @@
             <button class="btn btn-green" onclick="carregarDados()">🔄 Consultar Banco</button>
         </div>
     </div>
- <div class="nav-container" style="display: flex; justify-content: center; align-items: center; width: 100%; padding: 10px;">
-    <div class="badge-alerta" style="padding: 5px 15px; background: #0c8af1; border-radius: 20px;">
-        📦 Total: <span id="count-alerta">0</span>
+
+    <div class="nav-container" style="display: flex; justify-content: center; align-items: center; width: 100%; padding: 10px;">
+        <div class="badge-alerta" style="padding: 5px 15px; background: #0c8af1; border-radius: 20px;">
+            📦 Total: <span id="count-alerta">0</span>
+        </div>
     </div>
-</div>
-<div id="containerGrafico" class="main-card" style="display: none; justify-content: center; align-items: center; gap: 20px; width: 95%; max-width: 1000px; margin: 0 auto 20px auto; padding: 15px;">
-    <div style="width: 400px; height: 250px;">
-        <canvas id="meuGrafico"></canvas>
-    </div>
-    
-    <div style="width: 400px; height: 250px;">
-        <canvas id="meuGraficoExcel"></canvas>
-    </div>
-</div>        
+
+    <div id="containerGrafico" class="main-card" style="display: none; justify-content: center; align-items: center; gap: 20px; width: 95%; max-width: 1000px; margin: 0 auto 20px auto; padding: 15px;">
+        <div style="width: 400px; height: 250px;">
+            <canvas id="meuGrafico"></canvas>
+        </div>
+        
+        <div style="width: 400px; height: 250px;">
+            <canvas id="meuGraficoExcel"></canvas>
+        </div>
+    </div>        
+        
     <div class="main-card">
         <table id="tabelaDados">
             <thead>
                 <tr>
                     <th style="width: 100px;">Emissão NF</th>
                     <th style="width: 100px;">Pedido</th>
-                    <th style="width: 60px; text-align: center;">LOC</th> <th style="width: 150px;">Vendedor</th>
+                    <th style="width: 60px; text-align: center;">LOC</th> 
+                    <th style="width: 150px;">Vendedor</th>
                     <th style="width: 100px;">NF</th>
                     <th>Cliente</th>
                     <th style="width: 150px;">Transporte</th>
@@ -101,7 +105,7 @@
     let graficoExcel;
     Chart.register(ChartDataLabels);
 
-   async function carregarGraficoExcel(dataInicio = '', dataFim = '') {
+    async function carregarGraficoExcel(dataInicio = '', dataFim = '') {
         try {
             let params = new URLSearchParams();
             if (dataInicio) params.append('inicio', dataInicio);
@@ -150,78 +154,81 @@
     }
     
     function toggleGrafico() {
-    const g = document.getElementById('containerGrafico');
-    if (g.style.display === "none") {
-        g.style.display = "flex"; 
-    } else {
-        g.style.display = "none"; 
+        const g = document.getElementById('containerGrafico');
+        if (g.style.display === "none") {
+            g.style.display = "flex"; 
+            
+            setTimeout(() => {
+                if (meuGrafico) meuGrafico.resize();
+                if (graficoExcel) graficoExcel.resize();
+            }, 10);
+        } else {
+            g.style.display = "none"; 
+        }
     }
-}
     
     function atualizarGrafico(dadosFiltrados) {
-    const contagem = {
-        "NOSSO CARRO": 0,
-        "RETIRA": 0,
-        "TRANSPORTADORA": 0
-    };
+        const contagem = {
+            "NOSSO CARRO": 0,
+            "RETIRA": 0,
+            "TRANSPORTADORA": 0
+        };
 
-    dadosFiltrados.forEach(p => {
-        const t = (p.transp || "").toUpperCase().trim();
-        if (t === "NOSSO CARRO") {
-            contagem["NOSSO CARRO"]++;
-        } else if (t === "RETIRA") {
-            contagem["RETIRA"]++;
-        } else if (t !== "") {
-            contagem["TRANSPORTADORA"]++;
-        }
-    });
+        dadosFiltrados.forEach(p => {
+            const t = (p.transp || "").toUpperCase().trim();
+            if (t === "NOSSO CARRO") {
+                contagem["NOSSO CARRO"]++;
+            } else if (t === "RETIRA") {
+                contagem["RETIRA"]++;
+            } else if (t !== "") {
+                contagem["TRANSPORTADORA"]++;
+            }
+        });
 
-    const ctx = document.getElementById('meuGrafico').getContext('2d');
-    if (meuGrafico) meuGrafico.destroy();
+        const ctx = document.getElementById('meuGrafico').getContext('2d');
+        if (meuGrafico) meuGrafico.destroy();
 
-    meuGrafico = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Nosso Carro', 'Retira', 'Transportadora'],
-            datasets: [{
-                data: [contagem["NOSSO CARRO"], contagem["RETIRA"], contagem["TRANSPORTADORA"]],
-                backgroundColor: ['#2ed573', '#1e90ff', '#ffa502'],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'left' },
-                title: { display: true, text: 'Resumo de Transportes' },
-                datalabels: {
-                    color: '#fff',
-                    font: { weight: 'bold', size: 12 },
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => { sum += data; });
-                        let percentage = (value * 100 / sum).toFixed(1) + "%";
-                        return value > 0 ? percentage : '';
+        meuGrafico = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Nosso Carro', 'Retira', 'Transportadora'],
+                datasets: [{
+                    data: [contagem["NOSSO CARRO"], contagem["RETIRA"], contagem["TRANSPORTADORA"]],
+                    backgroundColor: ['#2ed573', '#1e90ff', '#ffa502'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'left' },
+                    title: { display: true, text: 'Resumo de Transportes' },
+                    datalabels: {
+                        color: '#fff',
+                        font: { weight: 'bold', size: 12 },
+                        formatter: (value, ctx) => {
+                            let sum = 0;
+                            let dataArr = ctx.chart.data.datasets[0].data;
+                            dataArr.map(data => { sum += data; });
+                            let percentage = (value * 100 / sum).toFixed(1) + "%";
+                            return value > 0 ? percentage : '';
+                        }
                     }
                 }
             }
-        }
-    });
-}
+        });
+    }
 
-    
     let timeoutBusca;
     document.getElementById('inputBusca').addEventListener('input', () => {
         clearTimeout(timeoutBusca);
         timeoutBusca = setTimeout(renderizar, 300);
     });
 
-    
     async function carregarDados() {
         const body = document.getElementById('corpo-tabela');
-        body.innerHTML = "<tr><td colspan='9' style='text-align:center'>Carregando dados...</td></tr>"; // Colspan atualizado para 9
+        body.innerHTML = "<tr><td colspan='9' style='text-align:center'>Carregando dados...</td></tr>";
         
         try {
             const di = document.getElementById('dataInicio').value;
@@ -247,7 +254,6 @@
             });
 
             renderizar(); 
-            
             carregarGraficoExcel(di, df); 
 
         } catch (e) {
@@ -256,41 +262,46 @@
         }
     }
 
-function toggleAgendada(btn) {
-    filtrarAgendadas = !filtrarAgendadas;
-    btn.classList.toggle('btn-active', filtrarAgendadas);
-    renderizar();
-}
-    
-function toggleFiltro(tipo, valor, btn) {
-    if (tipo === 'transp') {
-        const jaAtivo = fTransp === valor;
-        document.querySelectorAll('.btn-blue').forEach(b => b.classList.remove('btn-active'));
-        fTransp = jaAtivo ? "" : valor;
-        if (!jaAtivo) btn.classList.add('btn-active');
-    } else {
-        const jaAtivo = fStatus === valor;
-        fStatus = jaAtivo ? "" : valor;
-        btn.classList.toggle('btn-active', !jaAtivo);
-
-        if (valor === 'COLETADO' && !jaAtivo) {
-            filtroDataPor = 'status';
-        } else {
-            filtroDataPor = 'emissao';
-        }
+    function toggleAgendada(btn) {
+        filtrarAgendadas = !filtrarAgendadas;
+        btn.classList.toggle('btn-active', filtrarAgendadas);
+        renderizar();
     }
-    renderizar();
-}
+        
+    function toggleFiltro(tipo, valor, btn) {
+        if (tipo === 'transp') {
+            const jaAtivo = fTransp === valor;
+            document.querySelectorAll('.btn-blue').forEach(b => b.classList.remove('btn-active'));
+            fTransp = jaAtivo ? "" : valor;
+            if (!jaAtivo) btn.classList.add('btn-active');
+        } else {
+            const jaAtivo = fStatus === valor;
+            fStatus = jaAtivo ? "" : valor;
+            btn.classList.toggle('btn-active', !jaAtivo);
+
+            if (valor === 'COLETADO' && !jaAtivo) {
+                filtroDataPor = 'status';
+            } else {
+                filtroDataPor = 'emissao';
+            }
+        }
+        renderizar();
+    }
 
     function resetar() {
-    fTransp = ""; 
-    fStatus = "";
-    filtrarAgendadas = false; 
-    filtroDataPor = 'emissao';
-    document.getElementById('inputBusca').value = "";
-    document.querySelectorAll('.btn').forEach(b => b.classList.remove('btn-active'));
-    renderizar();
-}
+        fTransp = ""; 
+        fStatus = "";
+        filtrarAgendadas = false; 
+        filtroDataPor = 'emissao';
+        document.getElementById('inputBusca').value = "";
+        
+        // MELHORIA: Limpa também os seletores de data da tela
+        document.getElementById('dataInicio').value = "";
+        document.getElementById('dataFim').value = "";
+        
+        document.querySelectorAll('.btn').forEach(b => b.classList.remove('btn-active'));
+        renderizar();
+    }
 
     function renderizar() {
         const busca = document.getElementById('inputBusca').value.toUpperCase();
@@ -299,14 +310,12 @@ function toggleFiltro(tipo, valor, btn) {
         if (!dadosOriginais) return;
 
         const filtrados = dadosOriginais.filter(p => {
-            
-            // TRATAMENTO DE BUSCA À PROVA DE FALHAS:
             const p_ped = p.pedido || "";
             const p_cli = p.cliente || "";
             const p_ven = p.vendedor || "";
             const p_nf  = p.nf || "";
             const p_tra = p.transp || "";
-            const p_loc = p.localizacao || ""; // Evita erro se vier null
+            const p_loc = p.localizacao || ""; 
 
             const txt = `${p_ped} ${p_cli} ${p_ven} ${p_nf} ${p_tra} ${p_loc}`.toUpperCase();
             const bOk = !busca || txt.includes(busca);
@@ -341,9 +350,7 @@ function toggleFiltro(tipo, valor, btn) {
             html += `<tr class="row-item">
                 <td style="font-weight:bold">${p.emissao || ''}</td>
                 <td>${p.pedido || ''}</td>
-
                 <td class="td-loc">${p.localizacao || '---'}</td>
-
                 <td>${p.vendedor || ''}</td>
                 <td style="color:#2ed573; font-weight:bold">${p.nf || ''}</td>
                 <td title="${p.cliente}">${p.cliente || ''}</td>
@@ -353,8 +360,7 @@ function toggleFiltro(tipo, valor, btn) {
             </tr>`;
         });
 
-        body.innerHTML = html || "<tr><td colspan='9' style='text-align:center'>Nenhum resultado encontrado.</td></tr>"; // Colspan 9
-        
+        body.innerHTML = html || "<tr><td colspan='9' style='text-align:center'>Nenhum resultado encontrado.</td></tr>";
         document.getElementById('count-alerta').innerText = filtrados.length;
         
         if (typeof atualizarGrafico === "function") {
@@ -362,9 +368,9 @@ function toggleFiltro(tipo, valor, btn) {
         }
     }
 
-   window.onload = () => {
-    carregarDados(); 
-};
+    window.onload = () => {
+        carregarDados(); 
+    };
 </script>
 </body>
 </html>

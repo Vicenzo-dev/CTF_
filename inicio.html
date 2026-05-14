@@ -7,8 +7,115 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
+    <style>
+    .container-quadro-avisos {
+        position: fixed;
+        top: 25px;
+        right: 25px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column; 
+        gap: 10px; 
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .item-aviso {
+        background: rgba(255, 193, 7, 0.2); 
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 193, 7, 0.4);
+        padding: 12px 18px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+
+    .item-aviso.urgente {
+        background: rgba(220, 53, 69, 0.2); 
+        border: 1px solid rgba(220, 53, 69, 0.4);
+    }
+
+    .item-aviso.bom {
+        background: rgba(27, 136, 5, 0.2); 
+        border: 1px solid rgba(27, 136, 5, 0.4);
+    }
+    
+    .texto-aviso {
+        flex: 1;
+        line-height: 1.4;
+        text-align: left; 
+    }
+
+   
+    .item-aviso:hover {
+        transform: translateX(-5px); 
+        background: rgba(255, 193, 7, 0.4);
+        box-shadow: 0 8px 25px rgba(255, 193, 7, 0.25);
+    }
+
+    .item-aviso.urgente:hover {
+        background: rgba(220, 53, 69, 0.4);
+        box-shadow: 0 8px 25px rgba(220, 53, 69, 0.25);
+    }
+
+    .item-aviso.bom:hover {
+        background: rgba(27, 136, 5, 0.4);
+        box-shadow: 0 8px 25px rgba(59, 220, 53, 0.25);
+    }
+    
+    
+    @media (max-width: 768px) {
+        
+        body {
+            position: relative;
+            padding-top: 140px; 
+        }
+
+        .container-quadro-avisos {
+            position: absolute; 
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%); 
+            max-width: 90%; 
+            right: auto;
+        }
+
+        .item-aviso {
+            font-size: 0.85rem;
+            padding: 12px 15px;
+        }
+    }
+</style>
 </head>
 <body>
+
+    <div class="container-quadro-avisos">
+     
+        <a target="_blank" class="item-aviso bom">
+            <span>🌞</span>
+            <div class="texto-aviso">
+                Bom dia! Boa <span id="dia-atual" class="dia-destaque"></span> a todos!
+            </div>
+        </a>
+
+        <a target="_blank" class="item-aviso bom">
+            <span>💻</span> 
+            <div class="texto-aviso">
+                Última Atualização Power BI 14/05/26, 08:26:17
+            </div>
+        </a>
+
+    </div>
 
     <div class="background-decor"></div>
 
@@ -36,11 +143,23 @@
                 <a href="" target="_blank" class="btn">
                     <span class="icon">📅</span> Planilha Compartilhada
                 </a>
-                <a href="index.html" class="btn">
+                <a href="index.html" target="_blank" class="btn">
                     <span class="icon">🔍</span> Consulta de Pedidos
                 </a>
-                <a href="Dash1.html" class="btn">
-                    <span class="icon">🚚</span> Gestão de Coletas
+                <a href="Dash1.html" target="_blank" class="btn">
+                    <span class="icon">🚚</span> Gestão de Expedição
+                </a>
+                <a href="indexnf.html" target="_blank" class="btn">
+                    <span class="icon">📄</span> Monitoramento de Notas Fiscais (Entrada)
+                </a>
+                <a href="" target="_blank" class="btn">
+                    <span class="icon">🔒</span> Dashboard Acurácia (apenas usuários permitidos)
+                </a>
+                <a href="" target="_blank" class="btn">
+                    <span class="icon">🔒</span> Atualizar Dashboards (apenas usuários permitidos)
+                </a>
+                <a href="" target="_blank" class="btn">
+                    <span class="icon">⭐</span> Planilha De Requisição
                 </a>
             </nav>
         </section>
@@ -49,6 +168,18 @@
             <p>© 2026 Contuflex </p>
         </footer>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {     
+            const hoje = new Date();
+            const opcoes = { weekday: 'long' };
+            const diaDaSemana = hoje.toLocaleDateString('pt-BR', opcoes);
+            const elementoDia = document.getElementById("dia-atual");
+            if (elementoDia) {
+                elementoDia.textContent = diaDaSemana;
+            }
+        });
+    </script>
 
 </body>
 </html>

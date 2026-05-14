@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Monitoramento de Notas Fiscais</title>
+    <style>
+        :root {--bg-gradient: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);}
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-gradient); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        header { width: 100%; padding: 20px; text-align: center; color: #2d3436; }
+        
+        .nav-container { width: 95%; max-width: 1300px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .badge-total { background: #0c8af1; color: white; padding: 10px 25px; border-radius: 20px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        /* Filtros */
+        .filter-box { background: white; width: 95%; max-width: 1300px; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .filter-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        input, select { padding: 10px; border-radius: 6px; border: 1px solid #ccc; outline: none; }
+        
+        /* Botões */
+        .btn { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; color: white; font-size: 12px; text-transform: uppercase; }
+        .btn-erp-ok { background: #2ed573; }
+        .btn-erp-pend { background: #ff4757; }
+        .btn-entrada { background: #10ac84; }
+        .btn-recusa { background: #ee5253; }
+        .btn-vale { background: #95afc0; }
+        .btn-qualidade { background: #22a6b3; }
+        .btn-compras { background: #f0932b; }
+        .btn-active { outline: 3px solid #2d3436; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); transform: scale(1.05); }
+
+        /* Tabela */
+        .main-card { background: white; width: 95%; max-width: 1300px; border-radius: 12px; padding: 20px; box-shadow: 0 8px 15px rgba(0,0,0,0.2); margin-bottom: 30px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid #eee; color: #003d5b; font-size: 12px; text-transform: uppercase; }
+        td { padding: 10px 12px; border-bottom: 1px solid #f1f1f1; font-size: 13px; }
+        .row-item:hover { background-color: #f9f9f9; }
+        
+        /* Estilos de Status e Tags */
+        .status-ok { color: #2ed573; font-weight: bold; }
+        .status-pendente { color: #ff4757; font-weight: bold; }
+        .tag-tipo { padding: 5px 10px; border-radius: 4px; color: white; font-size: 11px; font-weight: bold; }
+        .bg-entrada { background: #10ac84; }
+        .bg-recusa { background: #ee5253; }
+        .bg-vale { background: #95afc0; }
+        .bg-qualidade { background: #22a6b3; }
+        .bg-compras { background: #f0932b; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="background: white; display: inline-block; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+            <img src="logo-placeholder.png" alt="Logo Empresa" width="160">
+        </div>
+        <h1>Monitoramento de Notas Fiscais</h1>
+        <h4>Desenvolvido por: Vicenzo / github.com/vicenzo-dev </h4>
+    </header>
+
+    <div class="nav-container">
+        <a href="/" style="color: #2d3436; font-weight: bold; text-decoration: none; background: white; padding: 8px 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">🏠 Início</a>
+        <div class="badge-total">📄 Total Filtrado: <span id="count-total">0</span></div>
+    </div>
+
+    <div class="filter-box">
+        <div class="filter-row">
+            <input type="text" id="inputBusca" placeholder="Busca Rápida (NF, Fornecedor...)" style="width: 300px;">
+            <button class="btn btn-erp-pend" onclick="toggleFiltro('status', 'pendente', this)">⚠️ Pendente ERP</button>
+            <button class="btn btn-erp-ok" onclick="toggleFiltro('status', 'concluido', this)">✅ Lançadas</button>
+            <button class="btn" style="background: #eee; color: #333;" onclick="resetarFiltros()">Limpar Filtros</button>
+        </div>
+
+        <div class="filter-row" style="border-top: 1px solid #eee; padding-top: 15px;">
+            <span style="font-weight: bold; font-size: 13px;">Tipo:</span>
+            <button class="btn btn-entrada" onclick="toggleFiltro('tipo', 'ENTRADA', this)">Entrada</button>
+            <button class="btn btn-recusa" onclick="toggleFiltro('tipo', 'RECUSA', this)">Recusa</button>
+            <button class="btn btn-vale" onclick="toggleFiltro('tipo', 'VALE', this)">Vale</button>
+            <button class="btn btn-qualidade" onclick="toggleFiltro('tipo', 'QUALIDADE', this)">Qualidade</button>
+            <button class="btn btn-compras" onclick="toggleFiltro('tipo', 'COMPRAS', this)">Compras</button>
+        </div>
+
+        <form action="/api/consultar" method="GET" class="filter-row" style="border-top: 1px solid #eee; padding-top: 15px;">
+            <span style="font-weight: bold; font-size: 13px;">Consultar Histórico:</span>
+            <input type="number" name="dia" min="1" max="31" placeholder="Dia" style="width: 80px;">
+            <select name="mes">
+                <option value="">Mês...</option>
+                <option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option>
+                <option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option>
+                <option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option>
+                <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
+            </select>
+            <input type="number" name="ano" value="2026" style="width: 80px;">
+            <button type="submit" class="btn" style="background: #0c8af1;">🔄 Atualizar Dados</button>
+        </form>
+    </div>
+
+    <div class="main-card">
+        <table id="tabelaDados">
+            <thead>
+                <tr>
+                    <th>NF</th>
+                    <th>Data Receb.</th>
+                    <th>Data Emissão</th>
+                    <th>Fornecedor</th>
+                    <th>Tipo</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="corpo-tabela">
+                {% for linha in tabelas %}
+                <tr class="row-item" 
+                    data-status="{{ linha['status'] | lower | trim }}" 
+                    data-tipo="{{ linha['tipo'] | upper | trim }}">
+                    
+                    <td style="font-weight: bold;">{{ linha['numero_nf'] }}</td>
+                    <td>{{ linha['data_recebimento'] }}</td>
+                    <td>{{ linha['data_emissao'] }}</td>
+                    <td>{{ linha['fornecedor'] }}</td>
+                    <td>
+                        <span class="tag-tipo bg-{{ linha['tipo'] | lower }}">
+                            {{ linha['tipo'] }}
+                        </span>
+                    </td>
+                    <td class="{{ 'status-ok' if 'Lançada' in linha['status'] else 'status-pendente' }}">
+                        {{ linha['status'] }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let filtroStatus = "";
+        let filtroTipo = "";
+        const dadosOriginais = Array.from(document.querySelectorAll('#corpo-tabela tr'));
+
+        function toggleFiltro(categoria, valor, btn) {
+            if (categoria === 'status') {
+                if (filtroStatus === valor) { filtroStatus = ""; btn.classList.remove('btn-active'); }
+                else { 
+                    document.querySelectorAll('.btn-erp-ok, .btn-erp-pend').forEach(b => b.classList.remove('btn-active'));
+                    filtroStatus = valor; 
+                    btn.classList.add('btn-active');
+                }
+            } else if (categoria === 'tipo') {
+                if (filtroTipo === valor) { filtroTipo = ""; btn.classList.remove('btn-active'); }
+                else {
+                    document.querySelectorAll('.btn-entrada, .btn-recusa, .btn-vale, .btn-qualidade, .btn-compras').forEach(b => b.classList.remove('btn-active'));
+                    filtroTipo = valor;
+                    btn.classList.add('btn-active');
+                }
+            }
+            renderizar();
+        }
+
+        function renderizar() {
+            const busca = document.getElementById('inputBusca').value.toUpperCase().trim();
+            let visiveis = 0;
+
+            dadosOriginais.forEach(tr => {
+                const textoTr = tr.innerText.toUpperCase();
+                const st = tr.getAttribute('data-status');
+                const tp = tr.getAttribute('data-tipo');
+
+                const matchesBusca = !busca || textoTr.includes(busca);
+                const matchesStatus = !filtroStatus || st === filtroStatus;
+                const matchesTipo = !filtroTipo || tp === filtroTipo;
+
+                if (matchesBusca && matchesStatus && matchesTipo) {
+                    tr.style.display = "";
+                    visiveis++;
+                } else {
+                    tr.style.display = "none";
+                }
+            });
+            document.getElementById('count-total').innerText = visiveis;
+        }
+
+        function resetarFiltros() {
+            document.getElementById('inputBusca').value = "";
+            filtroStatus = ""; filtroTipo = "";
+            document.querySelectorAll('.btn').forEach(b => b.classList.remove('btn-active'));
+            renderizar();
+        }
+
+        document.getElementById('inputBusca').addEventListener('input', renderizar);
+        window.onload = renderizar;
+    </script>
+</body>
+</html>
