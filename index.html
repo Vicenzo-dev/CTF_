@@ -1,601 +1,334 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Temperos da Lê - Encomendas</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Pedidos - Contuflex</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-      
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        :root {
+            --primary-color: #003d5b;
+            --secondary-color: #00a8e8;
+            --success-green: #2ed573;
+            --danger-red: #ff4757;
+            --bg-gradient: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            --text-dark: #2d3436;
+            --glass-white: rgba(255, 255, 255, 0.95);
+        }  
+        
         body {
-            background-color: #311d11;
-            background-image: radial-gradient(#4a2c1a 10%, transparent 20%), 
-                              radial-gradient(#4a2c1a 10%, transparent 20%);
-            background-size: 20px 20px;
-            background-position: 0 0, 10px 10px;
-            color: #ffffff;
-            font-family: 'Montserrat', sans-serif;
-           
-            padding-top: clamp(140px, 20vh, 160px); 
-            padding-bottom: 110px; 
-            text-align: center;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-
-        .hub-topo {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: linear-gradient(135deg, #1a0d06 0%, #2c1a0f 100%);
-            border-bottom: 3px solid #a86c34;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
-        }
-
-        .hub-titulo {
-            font-family: 'Dancing Script', cursive;
-            font-size: 2.2rem;
-            color: #fce7cf;
-            margin: 10px 0 5px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            letter-spacing: 1px;
-        }
-
-        .hub-carrossel {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            white-space: nowrap;
-            padding: 10px 15px;
-            gap: 12px;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .hub-carrossel::-webkit-scrollbar {
-            display: none;
-        }
-
-        .hub-item {
-            flex: 0 0 auto;
-            scroll-snap-align: center;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #754421;
-            padding: 8px 16px;
-            border-radius: 25px; 
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease;
-        }
-
-        .hub-item.destaque {
-            background: #a86c34;
-            border-color: #f39c12;
-            font-weight: 600;
-        }
-
-        .hub-item.total-carrinho {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-            border-color: #27ae60;
-            font-weight: 700;
-            font-size: 1.05rem;
-            box-shadow: 0 4px 10px rgba(39, 174, 96, 0.4);
-            transition: all 0.2s ease;
-        }
-
-
-        .pulso {
-            animation: pulse-animation 0.3s ease-out;
-        }
-
-        @keyframes pulse-animation {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15); filter: brightness(1.2); }
-            100% { transform: scale(1); }
-        }
-
-
-        .area-busca {
-            margin: 15px auto 25px auto;
-            padding: 0 15px;
-            max-width: 600px;
-            width: 100%;
-        }
-
-        .area-busca input {
-            width: 100%;
-            padding: 14px 20px;
-            font-size: 1rem;
-            border-radius: 30px;
-            border: 2px solid #a86c34;
-            background: rgba(20, 10, 5, 0.8);
-            color: white;
-            outline: none;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .area-busca input:focus {
-            border-color: #f39c12;
-            box-shadow: 0 0 10px rgba(243, 156, 18, 0.3), inset 0 2px 5px rgba(0,0,0,0.5);
-        }
-
-        .container-temperos {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); 
-            gap: 15px;
-            padding: 0 15px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-
-        .tempero-card {
-            background: linear-gradient(145deg, rgba(30, 15, 8, 0.95), rgba(20, 10, 5, 0.85));
-            border: 1px solid #754421;
-            border-radius: 16px;
-            padding: 15px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            margin: 0;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        header {
+            width: 100%;
+            padding: 25px 0;
+            text-align: center;
+            animation: slideDown 0.5s ease;
+        }
+
+        .logo-box {
+            background: white;
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 10px;
+        }
+
+        .nav-container {
+            width: 95%;
+            max-width: 1200px;
+            margin-bottom: 15px;
+        }
+
+        .btn-inicio {
+            padding: 10px 18px;
+            background: var(--glass-white);
+            color: var(--primary-color);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .btn-inicio:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        .search-container {
+            margin-bottom: 35px;
+            display: flex;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        input {
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            width: 300px;
+            font-size: 16px;
+            outline: none;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--secondary-color); width: 340px; }
+
+        .btn-search {
+            padding: 15px 30px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-search:hover { background: var(--secondary-color); transform: scale(1.05); }
+
+        /* Timeline de Status */
+        .status-timeline {
+            width: 95%;
+            max-width: 1200px;
+            display: flex;
             justify-content: space-between;
+            margin-bottom: 30px;
             position: relative;
-        
-            opacity: 0;
-            transform: translateY(20px);
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .status-step { text-align: center; flex: 1; position: relative; z-index: 2; opacity: 0.3; transition: 0.5s; }
+        .status-step.active { opacity: 1; font-weight: bold; }
+        .status-step i { font-size: 24px; margin-bottom: 8px; display: block; color: var(--primary-color); }
+        .status-step span { font-size: 12px; text-transform: uppercase; }
+
+        /* Grid do Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            width: 95%;
+            max-width: 1200px;
+            padding-bottom: 50px;
+        }
+
+        .card {
+            background: var(--glass-white);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-top: 5px solid #d1d8e0;
+            transition: 0.3s ease;
             animation: fadeIn 0.6s ease forwards;
         }
 
-        @keyframes fadeIn {
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
 
-        .tempero-card h3 {
-            margin: 5px 0;
-            font-size: 1.1rem;
-            color: #fce7cf;
-            line-height: 1.3;
-        }
+        .card-largo { grid-column: span 2; }
 
-        .preco-info {
-            font-size: 0.85rem;
-            color: #d1a87b;
-            margin: 5px 0 12px 0;
-            font-weight: 600;
-        }
-
-        .tempero-card.esgotado {
-            opacity: 0.5;
-            pointer-events: none;
-            filter: grayscale(80%);
-        }
-
-        .selo-esgotado {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-            display: none;
-        }
-
-        .tempero-card.esgotado .selo-esgotado {
-            display: block;
-        }
-
-   
-        .contador {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 6px;
-            border-radius: 30px;
-            border: 1px solid #4a2c1a;
-            margin-top: auto;
-        }
-
-        .contador button {
-            background: linear-gradient(135deg, #a86c34, #8a5728);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 34px;
-            height: 34px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-            transition: transform 0.1s ease, background 0.2s;
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 8px;
         }
 
-        .contador button:active {
-            transform: scale(0.85);
-            background: #f39c12;
-        }
-
-        .contador span {
-            font-size: 1.1rem;
+        .card p {
+            margin: 0;
+            font-size: 18px;
             font-weight: 700;
-            width: 30px;
-            color: #f39c12;
+            color: var(--primary-color);
+            word-wrap: break-word;
         }
 
+        .destaque-blue { color: var(--secondary-color) !important; font-size: 24px !important; }
 
+        .card-full { grid-column: 1 / -1; text-align: center; border-top: none; background: rgba(0, 61, 91, 0.05); }
 
-        .creditos {
-            font-size: 0.75rem;
-            color: #d1a87b;
-            margin-bottom: 8px;
-            opacity: 0.8;
-            letter-spacing: 0.5px;
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        .creditos a {
-            color: #f39c12;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s ease;
-        }
-
-        .creditos a:hover {
-            color: #2ecc71;
-            text-decoration: underline;
-        }
-
-
-        .area-finalizar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(26, 13, 6, 0.85);
-            backdrop-filter: blur(8px); 
-            -webkit-backdrop-filter: blur(8px);
-            padding: 15px 0 calc(15px + env(safe-area-inset-bottom));
-            z-index: 999;
-            box-shadow: 0 -10px 20px rgba(0,0,0,0.6);
-            border-top: 1px solid rgba(168, 108, 52, 0.3);
-        }
-
-        .btn-whatsapp {
-            background: linear-gradient(135deg, #25D366, #128C7E);
-            color: white;
-            padding: 15px 30px;
-            font-size: 1.15rem;
-            font-weight: 700;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
-            width: 90%;
-            max-width: 400px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-whatsapp:active {
-            transform: scale(0.96);
-            box-shadow: 0 2px 8px rgba(37, 211, 102, 0.4);
+        @media (max-width: 768px) {
+            .card-largo { grid-column: span 1; }
+            input { width: 100%; }
+            .search-container { flex-direction: column; width: 90%; }
         }
     </style>
 </head>
 <body>
 
-    <div class="hub-topo">
-        <div class="hub-titulo">Temperos da Lê</div>
-        <div class="hub-carrossel">
-            <div class="hub-item" id="status-loja">⏳ Verificando horário...</div>
-            
-            <div class="hub-item total-carrinho" id="btn-total">🛒 Total: R$ <span id="valor-total">0,00</span></div>
-            <div class="hub-item destaque">📍 Av. Hugo Schachetti, 289 - Jd. Zaíra</div>
-            <div class="hub-item">💰 R$ 1,00 a colher</div>
-            <div class="hub-item">🔥 Promo Baiano: 5 por R$ 3,00</div>
-            <div class="hub-item">📞 (11) 96142-7444</div>
+    <header>
+        <div class="logo-box">
+            <img src="LOGO-CONTUFLEX-e1756214639359.png" alt="Contuflex" width="160">
+        </div>
+        <h1 style="margin: 10px 0 5px 0; color: var(--primary-color);">Rastreamento de Pedido</h1>
+        <p style="color: #636e72; margin: 0;">Logística & Expedição Inteligente</p>
+    </header>
+
+    <div class="nav-container">
+        <a href="inicio.html" class="btn-inicio"><i class="fas fa-home"></i> Início</a>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="inputPedido" placeholder="Digite o número do pedido...">
+        <button class="btn-search" onclick="buscarPedido()"><i class="fas fa-search"></i> PESQUISAR</button>
+    </div>
+
+    <div class="status-timeline" id="timeline">
+        <div class="status-step" id="step-pedido"><i class="fas fa-file-invoice"></i><span>Pedido Aberto</span></div>
+        <div class="status-step" id="step-faturado"><i class="fas fa-check-circle"></i><span>Faturado</span></div>
+        <div class="status-step" id="step-coletado"><i class="fas fa-truck-loading"></i><span>Coletado</span></div>
+    </div>
+
+    <div class="dashboard">
+        <div class="card" style="border-top-color: var(--secondary-color);">
+            <h3><i class="fas fa-hashtag"></i> Pedido</h3>
+            <p id="res-pedido" class="destaque-blue">-</p>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-building"></i> Empresa</h3>
+            <p id="res-empresa">-</p>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-receipt"></i> Nota Fiscal</h3>
+            <p id="res-nf" style="color: var(--success-green);">-</p>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-calendar-check"></i> Emissão NF</h3>
+            <p id="res-emissao-nf">-</p>
+        </div>
+
+        <div class="card card-largo">
+            <h3><i class="fas fa-user-tie"></i> Cliente</h3>
+            <p id="res-cliente">-</p>
+        </div>
+        <div class="card card-largo">
+            <h3><i class="fas fa-shipping-fast"></i> Transportadora / Via</h3>
+            <p id="res-transp">-</p>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-calendar-alt"></i> Data do Pedido</h3>
+            <p id="res-emissao-ped">-</p>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-user-edit"></i> Vendedor</h3>
+            <p id="res-vendedor">-</p>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-clock"></i> Lead Time</h3>
+            <p id="res-producao">-</p>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-box"></i> Expedição</h3>
+            <p id="res-data_col">-</p>
+        </div>
+
+        <div class="card card-full">
+            <p id="res-obs" style="font-weight: normal; font-size: 15px; color: #7f8c8d;">Insira um pedido para iniciar a consulta em tempo real no Protheus.</p>
         </div>
     </div>
 
-    <div class="area-busca">
-        <input type="text" id="campo-busca" placeholder="🔍 Buscar tempero...">
-    </div>
-
-    <div class="container-temperos" id="lista-temperos"></div>
-
-    <div class="area-finalizar">
-        <div class="creditos">
-            Desenvolvido por <a href="https://github.com/Vicenzo-dev" target="_blank">Vicenzo</a>
-        </div>
-        <button id="enviar-whatsapp" class="btn-whatsapp">📲 Enviar Pedido por WhatsApp</button>
-    </div>
+    <div class="footer-tag">Sistema Desenvolvido por Vicenzo Henrique &bull; Contuflex 2026</div>
 
     <script>
-      
-        const tabelaPrecos = {
-            padrao: 1.00,      
-            alhoCabeca: 2.50    
-        };
+        function calcularDiferenca(dataIni, dataFim) {
+            if (!dataIni || dataIni === "-") return "-";
+            
+            const [d1, m1, a1] = dataIni.split('/');
+            const date1 = new Date(a1, m1 - 1, d1);
+            
+            let date2;
+            if (!dataFim || dataFim === "-" || dataFim === "Pendente") {
+                date2 = new Date(); 
+            } else {
+                const [d2, m2, a2] = dataFim.split('/');
+                date2 = new Date(a2, m2 - 1, d2);
+            }
+            
+            const diffTime = Math.abs(date2 - date1);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays + (diffDays === 1 ? " dia" : " dias");
+        }
 
+        function atualizarTimeline(data) {
+         
+            document.querySelectorAll('.status-step').forEach(s => s.classList.remove('active'));
+            
+          
+            document.getElementById('step-pedido').classList.add('active');
+
+            if (data.nf && data.nf !== "Pendente") {
+                document.getElementById('step-faturado').classList.add('active');
+            }
     
-        const produtos = [
-            { nome: "Chimi Churi", esgotado: false },
-            { nome: "Ana Maria", esgotado: false },
-            { nome: "Tempera tudo", esgotado: false },
-            { nome: "Açafrão", esgotado: false },
-            { nome: "Açafrão temperado", esgotado: false },
-            { nome: "Edu Guedes", esgotado: false },
-            { nome: "Lemon Pepper", esgotado: false },
-            { nome: "Caldo de carne", esgotado: false },
-            { nome: "Caldo de galinha", esgotado: false },
-            { nome: "Caldo de bacon", esgotado: false },
-            { nome: "Cominho", esgotado: false },
-            { nome: "Pimenta calabresa", esgotado: false },
-            { nome: "Pimenta do reino", esgotado: false },
-            { nome: "Orégano", esgotado: false },
-            { nome: "Coentro", esgotado: false },
-            { nome: "Tempero Baiano", esgotado: false, promo: true },
-            { nome: "Tempero gaúcho", esgotado: false },
-            { nome: "Tempero mineiro", esgotado: false },
-            { nome: "Vinagrete", esgotado: false },
-            { nome: "Bicarbonato", esgotado: false },
-            { nome: "Cravo", esgotado: false },
-            { nome: "Cravo em pó", esgotado: false },
-            { nome: "Canela em pau", esgotado: false },
-            { nome: "Canela em pó", esgotado: false },
-            { nome: "Master chef", esgotado: false },
-            { nome: "Gourmet", esgotado: false },
-            { nome: "Pega marido", esgotado: false },
-            { nome: "Chimi Churi defumado", esgotado: false },
-            { nome: "Colorau", esgotado: false },
-            { nome: "Páprica defumada", esgotado: false },
-            { nome: "Páprica picante", esgotado: false },
-            { nome: "Páprica doce", esgotado: false },
-            { nome: "Cebola granulada", esgotado: false },
-            { nome: "Alho granulado", esgotado: false },
-            { nome: "Fumaça em pó", esgotado: false },
-            { nome: "Cebola alho e salsa", esgotado: false },
-            { nome: "Curry", esgotado: false },
-            { nome: "Ervas finas", esgotado: false },
-            { nome: "Salsa", esgotado: false },
-            { nome: "Coentro em folhas", esgotado: false },
-            { nome: "Folhas de louro", esgotado: false },
-            { nome: "Alecrim", esgotado: false },
-            { nome: "Noz moscada", esgotado: false },
-            { nome: "Gengibre em pó", esgotado: false },
-            { nome: "Alho em pó", esgotado: false },
-            { nome: "Cebola em pó", esgotado: false },
-            { nome: "Manjericão", esgotado: false },
-            { nome: "Tomilho", esgotado: false },
-            { nome: "Cavalinha (Chá)", esgotado: false },
-            { nome: "Erva doce (Chá)", esgotado: false },
-            { nome: "Capim cidreira (Chá)", esgotado: false },
-            { nome: "Camomila (Chá)", esgotado: false },
-            { nome: "Alho em cabeça", esgotado: false, precoEspecial: "alhoCabeca" }
-        ];
-
-        const container = document.getElementById('lista-temperos');
-        const valorTotalDisplay = document.getElementById('valor-total');
-        const btnTotalCarrinho = document.getElementById('btn-total');
-
-  
-        produtos.forEach((produto, index) => {
-            const card = document.createElement('div');
-            card.className = `tempero-card ${produto.esgotado ? 'esgotado' : ''}`;
-            card.setAttribute('data-nome', produto.nome);
-            if(produto.promo) card.setAttribute('data-promo', 'true');
-            if(produto.precoEspecial) card.setAttribute('data-preco-especial', produto.precoEspecial);
-            
-       
-            card.style.animationDelay = `${index * 0.03}s`;
-
-            let legendaPreco = `R$ ${tabelaPrecos.padrao.toFixed(2).replace('.', ',')} / colher`;
-            if (produto.promo) {
-                legendaPreco = "🔥 Promo: 5 por R$3";
-            } else if (produto.precoEspecial) {
-                const valorEspecial = tabelaPrecos[produto.precoEspecial];
-                legendaPreco = `R$ ${valorEspecial.toFixed(2).replace('.', ',')} / unid.`;
-            }
-
-            card.innerHTML = `
-                <div class="selo-esgotado">Esgotado</div>
-                <h3>${produto.nome}</h3>
-                <div class="preco-info">${legendaPreco}</div>
-                <div class="contador">
-                    <button class="btn-menos">-</button>
-                    <span class="qtd">0</span>
-                    <button class="btn-mais">+</button>
-                </div>
-            `;
-            container.appendChild(card);
-        });
-
-        const cards = document.querySelectorAll('.tempero-card');
-
-        function obterPrecoDoCard(card, qtd) {
-            const tipoEspecial = card.getAttribute('data-preco-especial');
-            const isPromo = card.hasAttribute('data-promo');
-
-            if (isPromo) {
-                const gruposDeCinco = Math.floor(qtd / 5);
-                const sobra = qtd % 5;
-                return (gruposDeCinco * 3) + (sobra * tabelaPrecos.padrao);
-            } else if (tipoEspecial && tabelaPrecos[tipoEspecial] !== undefined) {
-                return qtd * tabelaPrecos[tipoEspecial];
-            } else {
-                return qtd * tabelaPrecos.padrao;
+            if (data.data_col && data.data_col.includes('/')) {
+                document.getElementById('step-coletado').classList.add('active');
             }
         }
 
-        function calcularTotal() {
-            let totalGeral = 0;
-            cards.forEach(card => {
-                if (!card.classList.contains('esgotado')) {
-                    const qtd = parseInt(card.querySelector('.qtd').textContent);
-                    if (qtd > 0) {
-                        totalGeral += obterPrecoDoCard(card, qtd);
-                    }
+        async function buscarPedido() {
+            const pedidoInput = document.getElementById('inputPedido').value.toUpperCase();
+            if (!pedidoInput) return;
+
+            const resObs = document.getElementById('res-obs');
+            resObs.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Acessando banco de dados TOTVS...';
+
+            try {
+                const response = await fetch(`${window.location.origin}/pedido/${pedidoInput}`);
+                const data = await response.json();
+
+                if (data.erro) {
+                    resObs.innerText = "⚠️ Pedido não localizado.";
+                    alert("Pedido inexistente ou excluído.");
+                } else {
+                    document.getElementById('res-pedido').innerText      = data.pedido;
+                    document.getElementById('res-empresa').innerText     = data.empresa;
+                    document.getElementById('res-cliente').innerText     = data.cliente;
+                    document.getElementById('res-emissao-ped').innerText = data.emissao_ped;
+                    document.getElementById('res-nf').innerText          = data.nf || 'Pendente';
+                    document.getElementById('res-emissao-nf').innerText  = data.emissao_nf || '-';
+                    document.getElementById('res-transp').innerText      = data.transp;
+                    document.getElementById('res-vendedor').innerText    = data.vendedor;
+
+                    const dias = calcularDiferenca(data.emissao_ped, data.emissao_nf);
+                    document.getElementById('res-producao').innerText = dias;
+
+                    const elDataCol = document.getElementById('res-data_col');
+                    const coletado = (data.data_col && data.data_col.includes('/'));
+                    elDataCol.innerText = coletado ? data.data_col : 'AGUARDANDO';
+                    elDataCol.style.color = coletado ? '#2ed573' : '#ff4757';
+
+                    atualizarTimeline(data);
+                    resObs.innerHTML = '<i class="fas fa-check-circle" style="color:var(--success-green)"></i> Dados sincronizados com sucesso.';
                 }
-            });
-            
-            valorTotalDisplay.textContent = totalGeral.toFixed(2).replace('.', ',');
-
-     
-            btnTotalCarrinho.classList.remove('pulso');
-            void btnTotalCarrinho.offsetWidth; 
-            btnTotalCarrinho.classList.add('pulso');
-
-            return totalGeral;
-        }
-
-   
-        cards.forEach(card => {
-            const btnMenos = card.querySelector('.btn-menos');
-            const btnMais = card.querySelector('.btn-mais');
-            const displayQtd = card.querySelector('.qtd');
-            let quantidade = 0;
-
-            btnMais.addEventListener('click', () => {
-                quantidade++;
-                displayQtd.textContent = quantidade;
-                calcularTotal();
-            });
-
-            btnMenos.addEventListener('click', () => {
-                if (quantidade > 0) {
-                    quantidade--;
-                    displayQtd.textContent = quantidade;
-                    calcularTotal();
-                }
-            });
-        });
-
-        const campoBusca = document.getElementById('campo-busca');
-        const removerAcentos = str => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-        campoBusca.addEventListener('input', (e) => {
-            const termo = removerAcentos(e.target.value.toLowerCase());
-            cards.forEach(card => {
-                const nome = removerAcentos(card.getAttribute('data-nome').toLowerCase());
-                card.style.display = nome.includes(termo) ? 'flex' : 'none';
-            });
-        });
-
-        document.getElementById('enviar-whatsapp').addEventListener('click', () => {
-            const numeroZap = "5511961427444"; 
-            let corpoTexto = "Olá! Gostaria de fazer a seguinte encomenda:\n\n";
-            let pediuAlgo = false;
-
-            cards.forEach(card => {
-                if(!card.classList.contains('esgotado')) {
-                    const nome = card.getAttribute('data-nome');
-                    const qtd = parseInt(card.querySelector('.qtd').textContent);
-                    const tipoEspecial = card.getAttribute('data-preco-especial');
-
-                    if (qtd > 0) {
-                        const precoItem = obterPrecoDoCard(card, qtd);
-                        const sufixoMedida = tipoEspecial ? "unid(s)" : "colher(es)";
-                        
-                        corpoTexto += `- ${qtd} ${sufixoMedida} de ${nome} (R$ ${precoItem.toFixed(2)})\n`;
-                        pediuAlgo = true;
-                    }
-                }
-            });
-
-            const totalFinal = calcularTotal();
-            corpoTexto += `\n💰 *Valor Total do Pedido:* R$ ${totalFinal.toFixed(2)}`;
-
-            if (pediuAlgo) {
-                const urlFinal = "https://wa.me/" + numeroZap + "?text=" + encodeURIComponent(corpoTexto);
-                window.open(urlFinal, '_blank');
-            } else {
-                alert("Por favor, adicione itens ao carrinho antes de enviar!");
-            }
-        });
-        function atualizarStatusLoja() {
-            const agora = new Date();
-            const diaSemana = agora.getDay(); 
-            const horaAtual = agora.getHours();
-            const minutoAtual = agora.getMinutes();
-            const tempoAtualEmMinutos = (horaAtual * 60) + minutoAtual;
-
-            const statusElemento = document.getElementById('status-loja');
-            
-            let aberto = false;
-            let mensagemHorario = "";
-
-            // ⚠️ NOTA SOBRE FERIADOS: 
-            // Se você quiser tratar feriados, precisará ativar manualmente esta variável abaixo como 'true' nos dias de feriado.
-            const ehFeriado = false; 
-
-            if (ehFeriado) {
-                // Feriados: 9:00 às 14:00 (540 min até 840 min)
-                if (tempoAtualEmMinutos >= 540 && tempoAtualEmMinutos < 840) aberto = true;
-                mensagemHorario = "Feriado: 9h às 14h";
-            } else {
-                switch (diaSemana) {
-                    case 0: // Domingo
-                        // 9:00 às 13:00 (540 min até 780 min)
-                        if (tempoAtualEmMinutos >= 540 && tempoAtualEmMinutos < 780) aberto = true;
-                        mensagemHorario = "Dom: 9h às 13h";
-                        break;
-                        
-                    case 1: // Segunda-feira
-                        aberto = false; // Loja Fechada
-                        mensagemHorario = "Segunda: Fechado";
-                        break;
-
-                    case 2: // Terça
-                    case 3: // Quarta
-                    case 4: // Quinta
-                    case 5: // Sexta
-                        // Terça a Sexta: 9:00 às 18:00 (540 min até 1080 min)
-                        if (tempoAtualEmMinutos >= 540 && tempoAtualEmMinutos < 1080) aberto = true;
-                        mensagemHorario = "Terça a Sex: 9h às 18h";
-                        break;
-
-                    case 6: // Sábado
-                        // Sábado: 9:00 às 14:30 (540 min até 870 min)
-                        if (tempoAtualEmMinutos >= 540 && tempoAtualEmMinutos < 870) aberto = true;
-                        mensagemHorario = "Sáb: 9h às 14:30h";
-                        break;
-                }
-            }
-
-            if (aberto) {
-                statusElemento.innerHTML = `🟢 **Aberto** (${mensagemHorario})`;
-                statusElemento.style.background = "rgba(39, 174, 96, 0.2)";
-                statusElemento.style.borderColor = "#2ecc71";
-            } else {
-                statusElemento.innerHTML = `🔴 **Fechado** (${mensagemHorario})`;
-                statusElemento.style.background = "rgba(231, 76, 60, 0.2)";
-                statusElemento.style.borderColor = "#e74c3c";
+            } catch (error) {
+                resObs.innerText = "❌ Erro na comunicação com o servidor.";
             }
         }
 
-        atualizarStatusLoja();
-        
-        setInterval(atualizarStatusLoja, 60000);
+        document.getElementById('inputPedido').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') buscarPedido();
+        });
     </script>
 </body>
 </html>
