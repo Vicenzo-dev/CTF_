@@ -1,6 +1,6 @@
 @echo off
-title Iniciando Sistema Contuflex
-echo Inicializando... Feito por Vicenzo...
+title Iniciando Sistema 
+echo Inicializando... Feito por Vicenzo... VzFlex
 
 :: Inicia o Python em uma janela separada (minimizado)
 start /min python app.py
